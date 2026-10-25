@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | CanteenConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f4f2;
+            color: #333;
+        }
+
+        header {
+            background: #218838;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .welcome h1 {
+            color: #218838;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            color: #218838;
+            margin-bottom: 18px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-card h3 {
+            color: #218838;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            color: #666;
+            line-height: 1.6;
+            min-height: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #218838;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #17692a;
+        }
+
+        .summary {
+            margin-top: 28px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .summary p {
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            padding: 25px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            .container {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🍽️ CanteenConnect</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart</a>
+        <a href="/my-orders">My Orders</a>
+        <a href="/login/student">Logout</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="welcome">
+        <h1>Welcome, Student! 👋</h1>
+        <p>
+            Manage your campus food orders in one place.
+            Browse the menu, add your favourite food to the cart,
+            and track your order history.
+        </p>
+    </section>
+
+    <h2 class="section-title">Your Dashboard</h2>
+
+    <section class="dashboard-grid">
+
+        <article class="dashboard-card">
+            <div class="icon">🍛</div>
+            <h3>Explore Menu</h3>
+            <p>Discover food available at the campus canteens.</p>
+            <a href="/menu" class="btn">View Menu</a>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="icon">🛒</div>
+            <h3>My Cart</h3>
+            <p>Review selected food items before placing an order.</p>
+            <a href="/cart" class="btn">View Cart</a>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="icon">📦</div>
+            <h3>My Orders</h3>
+            <p>View your previously placed orders and their details.</p>
+            <a href="/my-orders" class="btn">View Orders</a>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="icon">💳</div>
+            <h3>Checkout</h3>
+            <p>Enter your pickup details and place your order.</p>
+            <a href="/checkout" class="btn">Checkout</a>
+        </article>
+
+    </section>
+
+    <section class="summary">
+        <h2 class="section-title">Your Activity</h2>
+        <p id="cartSummary">Items in cart: 0</p>
+        <p id="orderSummary">Orders placed in this browser: 0</p>
+    </section>
+
+</main>
+
+<footer>
+    © 2026 CanteenConnect | Student Dashboard
+</footer>
+
+<script>
+    function updateDashboard() {
+        try {
+            const cart = JSON.parse(
+                localStorage.getItem("canteenCart") || "[]"
+            );
+
+            const orders = JSON.parse(
+                localStorage.getItem("canteenOrders") || "[]"
+            );
+
+            const itemCount = Array.isArray(cart)
+                ? cart.reduce(
+                    (sum, item) => sum + (Number(item.quantity) || 1), 0
+                )
+                : 0;
+
+            const orderCount = Array.isArray(orders) ? orders.length : 0;
+
+            document.getElementById("cartSummary").textContent =
+                "Items in cart: " + itemCount;
+
+            document.getElementById("orderSummary").textContent =
+                "Orders placed in this browser: " + orderCount;
+
+        } catch (error) {
+            document.getElementById("cartSummary").textContent =
+                "Cart information is currently unavailable.";
+
+            document.getElementById("orderSummary").textContent =
+                "Order information is currently unavailable.";
+        }
+    }
+
+    
+    updateDashboard();
+
+    // Identify the current user as a student for checkout
+    localStorage.setItem("canteenUserType", "student");
+</script>
+
+</body>
+</html>

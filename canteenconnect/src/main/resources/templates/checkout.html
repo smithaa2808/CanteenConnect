@@ -1,0 +1,523 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | CanteenConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f4f2;
+            color: #333;
+        }
+
+        header {
+            background: #218838;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #218838;
+            margin-bottom: 30px;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #218838;
+            margin-bottom: 22px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+            color: #333;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid #b4dfbd;
+            border-color: #218838;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-name {
+            font-weight: bold;
+        }
+
+        .item-detail {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .price {
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 22px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .total-amount {
+            color: #218838;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #218838;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 22px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #17692a;
+        }
+
+        .secondary-btn {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #218838;
+            text-decoration: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            line-height: 1.8;
+            padding: 30px;
+        }
+
+        .notice {
+            background: #fff3cd;
+            color: #664d03;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 18px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 700px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 18px 5%;
+            }
+
+            .container {
+                margin-top: 20px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🍽️ CanteenConnect</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart</a>
+        <a href="/my-orders">My Orders</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <h1>Checkout</h1>
+
+    <div id="emptyMessage" class="card empty-message" hidden>
+        <h2>Your cart is empty!</h2>
+        <p>Please add items to your cart before checking out.</p>
+        <a class="btn" href="/menu">Browse Menu</a>
+    </div>
+
+    <form id="checkoutForm" class="checkout-layout">
+
+        <!-- CUSTOMER DETAILS -->
+        <section class="card">
+
+            <h2 id="detailsHeading">Student Details</h2>
+
+            <div class="form-group">
+                <label for="customerName">Full Name *</label>
+                <input
+                    type="text"
+                    id="customerName"
+                    required
+                    placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="customerId" id="customerIdLabel">Student ID *</label>
+                <input
+                    type="text"
+                    id="customerId"
+                    required
+                    placeholder="Enter your student ID">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    required
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    placeholder="10-digit mobile number">
+            </div>
+
+            <div class="form-group">
+                <label for="pickupLocation">Pickup Location *</label>
+                <select id="pickupLocation" required>
+                    <option value="">Select your canteen</option>
+                    <option value="Girls Hostel Canteen">Girls Hostel Canteen</option>
+                    <option value="Advanced Block Canteen">Advanced Block Canteen</option>
+                    <option value="Common Canteen">Common Canteen</option>
+                    <option value="Architecture Block Canteen">Architecture Block Canteen</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pickupTime">Preferred Pickup Time *</label>
+                <input type="time" id="pickupTime" required>
+            </div>
+
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method *</label>
+                <select id="paymentMethod" required>
+                    <option value="">Select payment method</option>
+                    <option value="Cash on Pickup">Cash on Pickup</option>
+                    <option value="UPI">UPI (not connected yet)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Special Instructions (Optional)</label>
+                <textarea
+                    id="notes"
+                    rows="3"
+                    placeholder="Any additional instructions"></textarea>
+            </div>
+
+        </section>
+
+        <!-- ORDER SUMMARY -->
+        <section class="card">
+
+            <h2>Order Summary</h2>
+
+            <div id="orderItems"></div>
+
+            <div class="total-row">
+                <span>Total Amount</span>
+                <span class="total-amount" id="totalAmount">₹0.00</span>
+            </div>
+
+            <div class="notice">
+                Your order will be recorded in this browser for this demo.
+                Online payment and server-side order storage are not connected.
+            </div>
+
+            <button type="submit" class="btn" id="placeOrderButton">
+                Place Order
+            </button>
+
+            <a href="/cart" class="secondary-btn">← Back to Cart</a>
+
+        </section>
+
+    </form>
+
+</main>
+
+<footer>
+    © 2026 CanteenConnect | Campus Food Ordering
+</footer>
+
+<script>
+    const CART_KEY = "canteenCart";
+    const ORDERS_KEY = "canteenOrders";
+
+    /*
+     * Determine whether the user is a student or teacher.
+     * The login/dashboard must set canteenUserType accordingly.
+     */
+    const userType =
+        localStorage.getItem("canteenUserType") === "teacher"
+            ? "teacher"
+            : "student";
+
+    const detailsHeading = document.getElementById("detailsHeading");
+    const customerIdLabel = document.getElementById("customerIdLabel");
+    const customerIdInput = document.getElementById("customerId");
+
+    if (userType === "teacher") {
+        detailsHeading.textContent = "Teacher Details";
+        customerIdLabel.textContent = "Teacher ID *";
+        customerIdInput.placeholder = "Enter your teacher ID";
+    } else {
+        detailsHeading.textContent = "Student Details";
+        customerIdLabel.textContent = "Student ID *";
+        customerIdInput.placeholder = "Enter your student ID";
+    }
+
+    function getCart() {
+        try {
+            const cart = JSON.parse(
+                localStorage.getItem(CART_KEY) || "[]"
+            );
+
+            return Array.isArray(cart) ? cart : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function formatPrice(amount) {
+        return "₹" + Number(amount).toFixed(2);
+    }
+
+    function renderOrderSummary() {
+        const cart = getCart();
+        const orderItems = document.getElementById("orderItems");
+        const form = document.getElementById("checkoutForm");
+        const emptyMessage = document.getElementById("emptyMessage");
+
+        orderItems.innerHTML = "";
+
+        if (cart.length === 0) {
+            form.hidden = true;
+            emptyMessage.hidden = false;
+            return;
+        }
+
+        form.hidden = false;
+        emptyMessage.hidden = true;
+
+        let total = 0;
+
+        cart.forEach(item => {
+            const quantity = Math.max(1, Number(item.quantity) || 1);
+            const price = Math.max(0, Number(item.price) || 0);
+            const subtotal = price * quantity;
+
+            total += subtotal;
+
+            const row = document.createElement("div");
+            row.className = "order-item";
+
+            const details = document.createElement("div");
+
+            const name = document.createElement("div");
+            name.className = "item-name";
+            name.textContent = item.name || "Menu Item";
+
+            const quantityText = document.createElement("div");
+            quantityText.className = "item-detail";
+            quantityText.textContent =
+                "Quantity: " + quantity + " × " + formatPrice(price);
+
+            details.appendChild(name);
+            details.appendChild(quantityText);
+
+            const priceElement = document.createElement("div");
+            priceElement.className = "price";
+            priceElement.textContent = formatPrice(subtotal);
+
+            row.appendChild(details);
+            row.appendChild(priceElement);
+            orderItems.appendChild(row);
+        });
+
+        document.getElementById("totalAmount").textContent =
+            formatPrice(total);
+    }
+
+    document.getElementById("checkoutForm").addEventListener(
+        "submit",
+        function(event) {
+            event.preventDefault();
+
+            const cart = getCart();
+
+            if (cart.length === 0) {
+                alert("Your cart is empty. Please add items first.");
+                return;
+            }
+
+            const paymentMethod =
+                document.getElementById("paymentMethod").value;
+
+            if (paymentMethod === "UPI") {
+                alert(
+                    "Online UPI payment is not connected yet. " +
+                    "Please select Cash on Pickup for this demo."
+                );
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => {
+                return sum +
+                    (Math.max(0, Number(item.price) || 0) *
+                    Math.max(1, Number(item.quantity) || 1));
+            }, 0);
+
+            const order = {
+                orderId: "CC" + Date.now(),
+                userType: userType,
+                customerName: document.getElementById("customerName").value.trim(),
+                customerId: document.getElementById("customerId").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                pickupLocation: document.getElementById("pickupLocation").value,
+                pickupTime: document.getElementById("pickupTime").value,
+                paymentMethod: paymentMethod,
+                notes: document.getElementById("notes").value.trim(),
+                items: cart,
+                total: total,
+                orderDate: new Date().toLocaleString(),
+                status: "Placed"
+            };
+
+            let orders = [];
+
+            try {
+                orders = JSON.parse(
+                    localStorage.getItem(ORDERS_KEY) || "[]"
+                );
+
+                if (!Array.isArray(orders)) {
+                    orders = [];
+                }
+            } catch (error) {
+                orders = [];
+            }
+
+            orders.push(order);
+
+            localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+            localStorage.setItem("lastCanteenOrder", JSON.stringify(order));
+
+            localStorage.removeItem(CART_KEY);
+
+            window.location.href = "/order-confirmation";
+        }
+    );
+
+    renderOrderSummary();
+</script>
+
+</body>
+</html>

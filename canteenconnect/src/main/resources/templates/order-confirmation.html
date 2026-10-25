@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation | CanteenConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f4f2;
+            color: #333;
+        }
+
+        header {
+            background: #218838;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .success-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #d4edda;
+            color: #218838;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 42px;
+            margin: 0 auto 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #218838;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .order-id {
+            background: #edf7ef;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .order-id strong {
+            display: block;
+            color: #218838;
+            font-size: 20px;
+            margin-top: 6px;
+        }
+
+        h2 {
+            color: #218838;
+            font-size: 20px;
+            margin: 22px 0 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 11px 0;
+            border-bottom: 1px solid #eee;
+            line-height: 1.5;
+        }
+
+        .detail-row span:first-child {
+            color: #666;
+        }
+
+        .detail-row span:last-child {
+            text-align: right;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-name {
+            font-weight: bold;
+        }
+
+        .item-quantity {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .total-row span:last-child {
+            color: #218838;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            flex: 1;
+            display: inline-block;
+            padding: 14px 10px;
+            border-radius: 7px;
+            background: #218838;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #17692a;
+        }
+
+        .btn-secondary {
+            background: #e5e9e6;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dcd6;
+        }
+
+        .message {
+            text-align: center;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 550px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            .container {
+                margin-top: 20px;
+                padding: 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🍽️ CanteenConnect</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/my-orders">My Orders</a>
+    </nav>
+</header>
+
+<main class="container">
+    <section class="card" id="confirmationCard">
+        <div class="success-icon">✓</div>
+
+        <h1>Order Placed Successfully!</h1>
+
+        <p class="subtitle">
+            Thank you for ordering with CanteenConnect.
+            Your order details are shown below.
+        </p>
+
+        <div class="order-id">
+            Order ID
+            <strong id="orderId">Loading...</strong>
+        </div>
+
+        <h2>Student Details</h2>
+        <div id="studentDetails"></div>
+
+        <h2>Ordered Items</h2>
+        <div id="orderedItems"></div>
+
+        <div class="total-row">
+            <span>Total Amount</span>
+            <span id="orderTotal">₹0.00</span>
+        </div>
+
+        <h2>Pickup Details</h2>
+        <div id="pickupDetails"></div>
+
+        <p class="subtitle" style="margin-top: 20px; margin-bottom: 0;">
+            Please keep your order ID for reference.
+        </p>
+
+        <div class="buttons">
+            <a href="/menu" class="btn">Order More</a>
+            <a href="/my-orders" class="btn btn-secondary">My Orders</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    © 2026 CanteenConnect | Campus Food Ordering
+</footer>
+
+<script>
+    function formatPrice(amount) {
+        return "₹" + Number(amount || 0).toFixed(2);
+    }
+
+    function addDetail(container, label, value) {
+        const row = document.createElement("div");
+        row.className = "detail-row";
+
+        const labelElement = document.createElement("span");
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement("span");
+        valueElement.textContent = value || "Not provided";
+
+        row.appendChild(labelElement);
+        row.appendChild(valueElement);
+        container.appendChild(row);
+    }
+
+    function loadConfirmation() {
+        let order;
+
+        try {
+            order = JSON.parse(
+                localStorage.getItem("lastCanteenOrder") || "null"
+            );
+        } catch (error) {
+            order = null;
+        }
+
+        const card = document.getElementById("confirmationCard");
+
+        if (!order || !order.orderId) {
+            card.innerHTML = `
+                <div class="message">
+                    <h1>No Recent Order Found</h1>
+                    <p>Place an order before viewing its confirmation.</p>
+                    <div class="buttons">
+                        <a href="/menu" class="btn">Browse Menu</a>
+                        <a href="/cart" class="btn btn-secondary">View Cart</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        document.getElementById("orderId").textContent = order.orderId;
+        document.getElementById("orderTotal").textContent =
+            formatPrice(order.total);
+
+        const studentDetails = document.getElementById("studentDetails");
+
+        addDetail(studentDetails, "Name", order.studentName);
+        addDetail(studentDetails, "Student ID", order.studentId);
+        addDetail(studentDetails, "Phone", order.phone);
+        addDetail(studentDetails, "Order Date", order.orderDate);
+
+        const orderedItems = document.getElementById("orderedItems");
+
+        (Array.isArray(order.items) ? order.items : []).forEach(item => {
+            const row = document.createElement("div");
+            row.className = "item-row";
+
+            const details = document.createElement("div");
+
+            const name = document.createElement("div");
+            name.className = "item-name";
+            name.textContent = item.name || "Menu Item";
+
+            const quantity = document.createElement("div");
+            quantity.className = "item-quantity";
+            quantity.textContent =
+                "Quantity: " + (Number(item.quantity) || 1);
+
+            details.appendChild(name);
+            details.appendChild(quantity);
+
+            const price = document.createElement("strong");
+            price.textContent = formatPrice(
+                (Number(item.price) || 0) *
+                (Number(item.quantity) || 1)
+            );
+
+            row.appendChild(details);
+            row.appendChild(price);
+            orderedItems.appendChild(row);
+        });
+
+        const pickupDetails = document.getElementById("pickupDetails");
+
+        addDetail(pickupDetails, "Pickup Location", order.pickupLocation);
+        addDetail(pickupDetails, "Pickup Time", order.pickupTime);
+        addDetail(pickupDetails, "Payment Method", order.paymentMethod);
+        addDetail(pickupDetails, "Order Status", order.status);
+
+        if (order.notes) {
+            addDetail(pickupDetails, "Instructions", order.notes);
+        }
+    }
+
+    loadConfirmation();
+</script>
+
+</body>
+</html>

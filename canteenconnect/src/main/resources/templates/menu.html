@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu | CanteenConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f3f1;
+            color: #26352b;
+        }
+
+        header {
+            background: #247447;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .heading h2 {
+            color: #247447;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .heading p {
+            color: #68756c;
+        }
+
+        .search-box {
+            display: block;
+            width: 100%;
+            max-width: 550px;
+            margin: 25px auto;
+            padding: 14px;
+            border: 1px solid #cbd5cd;
+            border-radius: 9px;
+            font-size: 16px;
+            outline-color: #247447;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 11px 20px;
+            background: white;
+            border: 1px solid #247447;
+            color: #247447;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #247447;
+            color: white;
+        }
+
+        .stall-heading {
+            color: #247447;
+            margin: 35px 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd8cd;
+            font-size: 25px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px #0000000d;
+            transition: transform 0.2s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .food-image {
+            height: 100px;
+            background: #e2e8e3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 45px;
+        }
+
+        .food-details {
+            padding: 16px;
+        }
+
+        .food-details h4 {
+            margin: 0 0 8px;
+            font-size: 17px;
+            min-height: 38px;
+            color: #26352b;
+        }
+
+        .stall-label {
+            display: inline-block;
+            font-size: 11px;
+            background: #e0f1e5;
+            color: #247447;
+            padding: 5px 8px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .price {
+            color: #247447;
+            font-size: 21px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .add-button {
+            width: 100%;
+            padding: 12px;
+            background: #247447;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .add-button:hover {
+            background: #195b35;
+        }
+
+        .message {
+            display: none;
+            background: #dff2e4;
+            color: #195b35;
+            padding: 13px;
+            border-radius: 7px;
+            margin: 15px auto;
+            text-align: center;
+            max-width: 550px;
+        }
+
+        .empty-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #68756c;
+        }
+
+        footer {
+            text-align: center;
+            padding: 22px;
+            margin-top: 45px;
+            background: #e2e7e2;
+            color: #56635a;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            .heading h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="menu-header">
+    <a href="/" class="brand">
+        <span class="brand-icon">🍽️</span>
+        <span>CanteenConnect</span>
+    </a>
+
+    <nav class="menu-nav">
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart (<span id="cartCount">0</span>)</a>
+        <a href="/my-orders">My Orders</a>
+    </nav>
+</header>
+
+
+<main class="container">
+
+    <section class="heading">
+        <h2>Our Food Menu 🍽️</h2>
+        <p>Explore your campus canteens and order your favourite food.</p>
+    </section>
+
+    <input
+        type="search"
+        id="searchInput"
+        class="search-box"
+        placeholder="🔍 Search for food items..."
+        aria-label="Search food items">
+
+    <div class="filters">
+        <button class="filter-btn active" data-stall="all">All Items</button>
+        <button class="filter-btn" data-stall="tiffin">Tiffin Stall</button>
+        <button class="filter-btn" data-stall="chat">Chat</button>
+        <button class="filter-btn" data-stall="chinese">Chinese Stall</button>
+    </div>
+
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <div id="menuContainer"></div>
+
+    <p id="emptyMessage" class="empty-message">
+        No food items found. Try another search.
+    </p>
+
+</main>
+
+<footer>
+    <p>© 2026 CanteenConnect | Campus Food Ordering System</p>
+</footer>
+
+<script>
+    /*
+     * Menu prices are based on your photographs.
+     * Where a price label was unclear, the item is marked
+     * for verification rather than silently guessing.
+     */
+
+    const menuItems = [
+        // TIFFIN STALL
+        {id: 101, name: "Banana Bajji", price: 10, stall: "tiffin", emoji: "🍌"},
+        {id: 102, name: "Bread Bajji", price: 10, stall: "tiffin", emoji: "🍞"},
+        {id: 103, name: "Chapati", price: 15, stall: "tiffin", emoji: "🫓"},
+        {id: 104, name: "Chilly Bajji", price: 10, stall: "tiffin", emoji: "🌶️"},
+        {id: 105, name: "Curd Vadai", price: 30, stall: "tiffin", emoji: "🥣"},
+        {id: 106, name: "Ghee Dosai", price: 45, stall: "tiffin", emoji: "🥞"},
+        {id: 107, name: "Idli", price: 7, stall: "tiffin", emoji: "🍚"},
+        {id: 108, name: "Kal Dosai", price: 15, stall: "tiffin", emoji: "🥞"},
+        {id: 109, name: "Masala Dosai", price: 35, stall: "tiffin", emoji: "🥞"},
+        {id: 110, name: "Masala Vadai", price: 5, stall: "tiffin", emoji: "🧆"},
+        {id: 111, name: "Medhu Vadai", price: 8, stall: "tiffin", emoji: "🧆"},
+        {id: 112, name: "Mini Idli (14 Nos)", price: 15, stall: "tiffin", emoji: "🍚"},
+        {id: 113, name: "Mysore Bonda", price: 10, stall: "tiffin", emoji: "🧆"},
+        {id: 114, name: "Onion Dosa", price: 30, stall: "tiffin", emoji: "🥞"},
+        {id: 115, name: "Onion Kal Dosai", price: 20, stall: "tiffin", emoji: "🥞"},
+        {id: 116, name: "Onion Pakoda (100 gm)", price: 25, stall: "tiffin", emoji: "🧅"},
+        {id: 117, name: "Onion Podi Dosai", price: 30, stall: "tiffin", emoji: "🥞"},
+        {id: 118, name: "Parotta (2 Nos)", price: 20, stall: "tiffin", emoji: "🫓"},
+        {id: 119, name: "Plain Dosai", price: 25, stall: "tiffin", emoji: "🥞"},
+        {id: 120, name: "Podi Dosai", price: 25, stall: "tiffin", emoji: "🥞"},
+        {id: 121, name: "Poori (2 Nos)", price: 25, stall: "tiffin", emoji: "🫓"},
+        {id: 122, name: "Sambar Vadai", price: 25, stall: "tiffin", emoji: "🥣"},
+        {id: 123, name: "Tiffin Parcel", price: 5, stall: "tiffin", emoji: "🥡"},
+
+        // CHAT
+        {id: 201, name: "Aloo Chaat", price: 30, stall: "chat", emoji: "🥔"},
+        {id: 202, name: "Aloo Puri", price: 30, stall: "chat", emoji: "🍛"},
+        {id: 203, name: "Aloo Samosa", price: 15, stall: "chat", emoji: "🥟"},
+        {id: 204, name: "Bhel Puri", price: 30, stall: "chat", emoji: "🥗"},
+        {id: 205, name: "Bread Omelette", price: 40, stall: "chat", emoji: "🍳"},
+        {id: 206, name: "Chenna Masala", price: 40, stall: "chat", emoji: "🍛"},
+        {id: 207, name: "Coffee", price: 15, stall: "chat", emoji: "☕"},
+        {id: 208, name: "Dhahi Puri", price: 50, stall: "chat", emoji: "🥗"},
+        {id: 209, name: "Dhahi Samosa", price: 40, stall: "chat", emoji: "🥟"},
+        {id: 210, name: "Egg Puff", price: 15, stall: "chat", emoji: "🥐"},
+        {id: 211, name: "Fry Pav Bhaji", price: 60, stall: "chat", emoji: "🍲"},
+        {id: 212, name: "Masala Puri", price: 40, stall: "chat", emoji: "🥗"},
+        {id: 213, name: "Mix Chaat", price: 50, stall: "chat", emoji: "🥗"},
+        {id: 214, name: "Pani Puri", price: 25, stall: "chat", emoji: "🥗"},
+        {id: 215, name: "Papdi Chaat", price: 40, stall: "chat", emoji: "🥗"},
+        {id: 216, name: "Parcel Chat Items", price: 5, stall: "chat", emoji: "🥡"},
+        {id: 217, name: "Pav Bhaji", price: 50, stall: "chat", emoji: "🍲"},
+        {id: 218, name: "Samosa Chenna", price: 40, stall: "chat", emoji: "🥟"},
+        {id: 219, name: "Sav Puri", price: 40, stall: "chat", emoji: "🥗"},
+        {id: 220, name: "Tea", price: 12, stall: "chat", emoji: "🍵"},
+
+        // CHINESE STALL
+        {id: 301, name: "Chicken 65 (Bone)", price: 80, stall: "chinese", emoji: "🍗"},
+        {id: 302, name: "Chicken Fried Rice", price: 130, stall: "chinese", emoji: "🍚"},
+        {id: 303, name: "Chicken Kothu Parotta", price: 130, stall: "chinese", emoji: "🍛"},
+        {id: 304, name: "Chicken Macaroni", price: 130, stall: "chinese", emoji: "🍝"},
+        {id: 305, name: "Chicken Manchurian", price: 130, stall: "chinese", emoji: "🍗"},
+        {id: 306, name: "Chicken Noodles", price: 130, stall: "chinese", emoji: "🍜"},
+        {id: 307, name: "Chicken Pasta", price: 110, stall: "chinese", emoji: "🍝"},
+        {id: 308, name: "Chilli Chicken", price: 110, stall: "chinese", emoji: "🍗"},
+        {id: 309, name: "Chilly Parotta", price: 60, stall: "chinese", emoji: "🍛"},
+        {id: 310, name: "Egg Bonda", price: 15, stall: "chinese", emoji: "🥚"},
+        {id: 311, name: "Egg Dosai", price: 40, stall: "chinese", emoji: "🥞"},
+        {id: 312, name: "Egg Fried Rice", price: 60, stall: "chinese", emoji: "🍚"},
+        {id: 313, name: "Egg Full Boil", price: 15, stall: "chinese", emoji: "🥚"},
+        {id: 314, name: "Egg Kalaki", price: 25, stall: "chinese", emoji: "🍳"},
+        {id: 315, name: "Egg Kothu Parotta", price: 80, stall: "chinese", emoji: "🍛"},
+        {id: 316, name: "Egg Macaroni", price: 90, stall: "chinese", emoji: "🍝"},
+        {id: 317, name: "Egg Noodles", price: 80, stall: "chinese", emoji: "🍜"},
+        {id: 318, name: "Egg Pasta", price: 90, stall: "chinese", emoji: "🍝"},
+        {id: 319, name: "Egg Podimas", price: 25, stall: "chinese", emoji: "🍳"},
+        {id: 320, name: "Half Boiled Egg", price: 15, stall: "chinese", emoji: "🥚"},
+        {id: 321, name: "Omelette", price: 20, stall: "chinese", emoji: "🍳"},
+        {id: 322, name: "Parcel Chinese Stall", price: 5, stall: "chinese", emoji: "🥡"},
+        {id: 323, name: "Veg Macaroni", price: 80, stall: "chinese", emoji: "🍝"},
+        {id: 324, name: "Veg Noodles", price: 80, stall: "chinese", emoji: "🍜"},
+        {id: 325, name: "Veg Pasta", price: 80, stall: "chinese", emoji: "🍝"}
+    ];
+
+    const stallNames = {
+        tiffin: "Tiffin Stall",
+        chat: "Chat",
+        chinese: "Chinese Stall"
+    };
+
+    let activeStall = "all";
+
+    function getCart() {
+        try {
+            const cart = JSON.parse(localStorage.getItem("canteenCart"));
+            return Array.isArray(cart) ? cart : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem("canteenCart", JSON.stringify(cart));
+    }
+
+    function updateCartCount() {
+        const cart = getCart();
+
+        const count = cart.reduce(function(total, item) {
+            return total + Number(item.quantity || 0);
+        }, 0);
+
+        document.getElementById("cartCount").textContent = count;
+    }
+
+    function renderMenu() {
+        const search = document.getElementById("searchInput")
+            .value.trim().toLowerCase();
+
+        const container = document.getElementById("menuContainer");
+        const emptyMessage = document.getElementById("emptyMessage");
+
+        container.innerHTML = "";
+
+        let visibleCount = 0;
+
+        const stalls = ["tiffin", "chat", "chinese"];
+
+        stalls.forEach(function(stall) {
+            if (activeStall !== "all" && activeStall !== stall) {
+                return;
+            }
+
+            const items = menuItems.filter(function(item) {
+                return item.stall === stall &&
+                    item.name.toLowerCase().includes(search);
+            });
+
+            if (items.length === 0) {
+                return;
+            }
+
+            visibleCount += items.length;
+
+            const heading = document.createElement("h3");
+            heading.className = "stall-heading";
+            heading.textContent = stallNames[stall];
+
+            const grid = document.createElement("section");
+            grid.className = "menu-grid";
+
+            items.forEach(function(item) {
+                const card = document.createElement("article");
+                card.className = "food-card";
+
+                const image = document.createElement("div");
+                image.className = "food-image";
+                image.textContent = item.emoji;
+                image.setAttribute("aria-hidden", "true");
+
+                const details = document.createElement("div");
+                details.className = "food-details";
+
+                const name = document.createElement("h4");
+                name.textContent = item.name;
+
+                const label = document.createElement("span");
+                label.className = "stall-label";
+                label.textContent = stallNames[item.stall];
+
+                const price = document.createElement("p");
+                price.className = "price";
+                price.textContent = "₹" + item.price.toFixed(2);
+
+                const button = document.createElement("button");
+                button.className = "add-button";
+                button.textContent = "＋ Add to Cart";
+                button.type = "button";
+
+                button.addEventListener("click", function() {
+                    addToCart(item);
+                });
+
+                details.appendChild(label);
+                details.appendChild(name);
+                details.appendChild(price);
+                details.appendChild(button);
+
+                card.appendChild(image);
+                card.appendChild(details);
+
+                grid.appendChild(card);
+            });
+
+            container.appendChild(heading);
+            container.appendChild(grid);
+        });
+
+        emptyMessage.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    function addToCart(item) {
+        const cart = getCart();
+
+        const existingItem = cart.find(function(cartItem) {
+            return Number(cartItem.id) === item.id;
+        });
+
+        if (existingItem) {
+            existingItem.quantity =
+                Number(existingItem.quantity || 0) + 1;
+        } else {
+            cart.push({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: 1
+            });
+        }
+
+        saveCart(cart);
+        updateCartCount();
+
+        const message = document.getElementById("message");
+        message.textContent = item.name + " added to your cart!";
+        message.style.display = "block";
+
+        window.clearTimeout(window.cartMessageTimer);
+
+        window.cartMessageTimer = window.setTimeout(function() {
+            message.style.display = "none";
+        }, 2500);
+    }
+
+    document.querySelectorAll(".filter-btn").forEach(function(button) {
+        button.addEventListener("click", function() {
+            document.querySelectorAll(".filter-btn").forEach(function(btn) {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+            activeStall = button.dataset.stall;
+            renderMenu();
+        });
+    });
+
+    document.getElementById("searchInput")
+        .addEventListener("input", renderMenu);
+
+    updateCartCount();
+    renderMenu();
+</script>
+
+</body>
+</html>

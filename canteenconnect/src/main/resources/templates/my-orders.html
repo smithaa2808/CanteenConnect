@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | CanteenConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f4f2;
+            color: #333;
+        }
+
+        header {
+            background: #218838;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #218838;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding-bottom: 17px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .order-id {
+            color: #218838;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .order-date {
+            color: #777;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #d4edda;
+            color: #17692a;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            color: #218838;
+            font-size: 18px;
+            margin: 20px 0 12px;
+        }
+
+        .item-row,
+        .detail-row,
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 11px 0;
+            border-bottom: 1px solid #eee;
+            line-height: 1.5;
+        }
+
+        .item-name {
+            font-weight: bold;
+        }
+
+        .item-quantity {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .detail-label {
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .total-row {
+            margin-top: 10px;
+            padding-top: 16px;
+            border-bottom: none;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .total-amount {
+            color: #218838;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 45px 20px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            color: #218838;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #218838;
+            color: white;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 7px;
+            margin-top: 22px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #17692a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            .container {
+                margin-top: 20px;
+                padding: 12px;
+            }
+
+            .order-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🍽️ CanteenConnect</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/menu">Menu</a>
+        <a href="/cart">Cart</a>
+        <a href="/my-orders">My Orders</a>
+    </nav>
+</header>
+
+<main class="container">
+    <h1>My Orders</h1>
+    <p class="subtitle">
+        View your previous orders and their details.
+    </p>
+
+    <div id="ordersContainer"></div>
+</main>
+
+<footer>
+    © 2026 CanteenConnect | Campus Food Ordering
+</footer>
+
+<script>
+    function formatPrice(amount) {
+        return "₹" + Number(amount || 0).toFixed(2);
+    }
+
+    function createElement(tag, className, text) {
+        const element = document.createElement(tag);
+
+        if (className) {
+            element.className = className;
+        }
+
+        if (text !== undefined) {
+            element.textContent = text;
+        }
+
+        return element;
+    }
+
+    function addDetail(container, label, value) {
+        const row = createElement("div", "detail-row");
+
+        row.appendChild(createElement("span", "detail-label", label));
+        row.appendChild(createElement(
+            "span",
+            "detail-value",
+            value || "Not provided"
+        ));
+
+        container.appendChild(row);
+    }
+
+    function renderOrders() {
+        const container = document.getElementById("ordersContainer");
+        container.innerHTML = "";
+
+        let orders = [];
+
+        try {
+            orders = JSON.parse(
+                localStorage.getItem("canteenOrders") || "[]"
+            );
+
+            if (!Array.isArray(orders)) {
+                orders = [];
+            }
+        } catch (error) {
+            orders = [];
+        }
+
+        if (orders.length === 0) {
+            const empty = createElement("div", "empty-state");
+
+            empty.appendChild(createElement("div", "empty-icon", "🛒"));
+            empty.appendChild(createElement("h2", "", "No Orders Yet"));
+
+            empty.appendChild(createElement(
+                "p",
+                "",
+                "You haven't placed any orders yet. Explore the menu and order your favourite food!"
+            ));
+
+            const button = createElement("a", "btn", "Browse Menu");
+            button.href = "/menu";
+            empty.appendChild(button);
+
+            container.appendChild(empty);
+            return;
+        }
+
+        // Display the most recent order first.
+        orders.slice().reverse().forEach(order => {
+            const card = createElement("article", "order-card");
+
+            const header = createElement("div", "order-header");
+            const heading = createElement("div");
+
+            heading.appendChild(createElement(
+                "div",
+                "order-id",
+                "Order ID: " + (order.orderId || "Unavailable")
+            ));
+
+            heading.appendChild(createElement(
+                "div",
+                "order-date",
+                order.orderDate || ""
+            ));
+
+            header.appendChild(heading);
+            header.appendChild(createElement(
+                "span",
+                "status",
+                order.status || "Placed"
+            ));
+
+            card.appendChild(header);
+
+            card.appendChild(createElement(
+                "h2",
+                "section-title",
+                "Items Ordered"
+            ));
+
+            const items = Array.isArray(order.items) ? order.items : [];
+
+            if (items.length === 0) {
+                card.appendChild(createElement("p", "", "No item details available."));
+            }
+
+            items.forEach(item => {
+                const row = createElement("div", "item-row");
+                const details = createElement("div");
+
+                details.appendChild(createElement(
+                    "div",
+                    "item-name",
+                    item.name || "Menu Item"
+                ));
+
+                details.appendChild(createElement(
+                    "div",
+                    "item-quantity",
+                    "Quantity: " + (Number(item.quantity) || 1)
+                ));
+
+                row.appendChild(details);
+
+                row.appendChild(createElement(
+                    "strong",
+                    "",
+                    formatPrice(
+                        (Number(item.price) || 0) *
+                        (Number(item.quantity) || 1)
+                    )
+                ));
+
+                card.appendChild(row);
+            });
+
+            const total = createElement("div", "total-row");
+
+            total.appendChild(createElement("span", "", "Total Amount"));
+            total.appendChild(createElement(
+                "span",
+                "total-amount",
+                formatPrice(order.total)
+            ));
+
+            card.appendChild(total);
+
+            card.appendChild(createElement(
+                "h2",
+                "section-title",
+                "Pickup & Payment Details"
+            ));
+
+            addDetail(card, "Student Name", order.studentName);
+            addDetail(card, "Student ID", order.studentId);
+            addDetail(card, "Pickup Location", order.pickupLocation);
+            addDetail(card, "Pickup Time", order.pickupTime);
+            addDetail(card, "Payment Method", order.paymentMethod);
+
+            if (order.notes) {
+                addDetail(card, "Instructions", order.notes);
+            }
+
+            container.appendChild(card);
+        });
+
+        const button = createElement("a", "btn", "Order More Food");
+        button.href = "/menu";
+        container.appendChild(button);
+    }
+
+    renderOrders();
+</script>
+
+</body>
+</html>
