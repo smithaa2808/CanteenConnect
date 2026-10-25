@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Profile - Canteen Connect</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f5f1; padding: 25px; }
+    h2 { color: #1f5134; }
+    .box { background: white; padding: 22px; border-radius: 10px; max-width: 420px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 12px; font-size: 14px; }
+    input { width: 100%; padding: 9px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    input[readonly] { background: #eee; color: #555; }
+    button, a.button { display: inline-block; margin: 16px 8px 0 0; padding: 10px 16px; background: #1f5134; color: white; text-decoration: none; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .secondary { background: #777; }
+    #message { margin-top: 12px; font-size: 14px; }
+    .ok { color: #1f5134; }
+    .bad { color: #b8331c; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>My Profile</h2>
+    <form id="profileForm">
+      <label>Student ID</label>
+      <input type="text" id="studentId" readonly>
+      <label>Email</label>
+      <input type="text" id="email" readonly>
+      <label>Selected Canteen</label>
+      <input type="text" id="canteen" readonly>
+      <label>Full Name</label>
+      <input type="text" id="name" required>
+      <label>Phone</label>
+      <input type="text" id="phone" required>
+      <label>Department</label>
+      <input type="text" id="department" required>
+      <button type="submit">Save Changes</button>
+      <a class="button secondary" href="home.html">Back to Home</a>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    async function loadProfile() {
+      const response = await fetch("/api/users/me");
+      if (response.status === 401) {
+        window.location.href = "login.html";
+        return;
+      }
+      const user = await response.json();
+
+      document.getElementById("studentId").value = user.studentId;
+      document.getElementById("email").value = user.email;
+      document.getElementById("canteen").value = user.selectedCanteenName || "Not selected";
+      document.getElementById("name").value = user.name;
+      document.getElementById("phone").value = user.phone;
+      document.getElementById("department").value = user.department;
+    }
+
+    document.getElementById("profileForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        department: document.getElementById("department").value
+      };
+
+      const response = await fetch("/api/users/me", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const message = document.getElementById("message");
+      if (response.ok) {
+        message.textContent = "Profile updated successfully";
+        message.className = "ok";
+      } else {
+        const error = await response.json();
+        message.textContent = error.message || "Could not update profile";
+        message.className = "bad";
+      }
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>
