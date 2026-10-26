@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites | Canteen Connect</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #202938;
+        }
+
+        header {
+            background: #183b32;
+            color: white;
+            padding: 24px 7%;
+        }
+
+        header h1 { margin: 0 0 10px; }
+
+        header a { color: white; }
+
+        main {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .food-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .category {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 7px;
+            cursor: pointer;
+            margin: 5px 5px 0 0;
+        }
+
+        .view {
+            background: #183b32;
+            color: white;
+        }
+
+        .remove {
+            background: #ffebe8;
+            color: #a62e20;
+        }
+
+        .empty {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>❤️ My Favorites</h1>
+        <a href="/menu.html">← Back to Menu</a>
+    </header>
+
+    <main>
+        <p id="status"></p>
+        <section id="favorites" class="favorites-grid"></section>
+    </main>
+
+    <script>
+        const KEY = "canteenConnectFavorites";
+        const container = document.getElementById("favorites");
+        const status = document.getElementById("status");
+
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem(KEY) || "[]");
+            } catch {
+                return [];
+            }
+        }
+
+        function renderFavorites() {
+            const items = getFavorites();
+            container.replaceChildren();
+
+            status.textContent = `${items.length} favorite item(s)`;
+
+            if (items.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "empty";
+                empty.textContent =
+                    "No favorites yet. Explore the menu and save your favourite food!";
+                container.appendChild(empty);
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement("article");
+                card.className = "food-card";
+
+                const name = document.createElement("h3");
+                name.textContent = item.name || "Food item";
+
+                const category = document.createElement("p");
+                category.className = "category";
+                category.textContent = item.category || "Other";
+
+                const price = document.createElement("p");
+                price.className = "price";
+                price.textContent = `₹${item.price}`;
+
+                const viewButton = document.createElement("button");
+                viewButton.className = "view";
+                viewButton.textContent = "View Details";
+                viewButton.addEventListener("click", () => {
+                    window.location.href =
+                        `/food-details.html?id=${encodeURIComponent(item.id)}`;
+                });
+
+                const removeButton = document.createElement("button");
+                removeButton.className = "remove";
+                removeButton.textContent = "Remove";
+                removeButton.addEventListener("click", () => {
+                    const updated = getFavorites().filter(
+                        saved => saved.id !== item.id
+                    );
+                    localStorage.setItem(KEY, JSON.stringify(updated));
+                    renderFavorites();
+                });
+
+                card.append(name, category, price, viewButton, removeButton);
+                container.appendChild(card);
+            });
+        }
+
+        renderFavorites();
+    </script>
+</body>
+</html>

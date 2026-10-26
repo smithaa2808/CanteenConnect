@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Details | Canteen Connect</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #202938;
+        }
+
+        header {
+            background: #183b32;
+            color: white;
+            padding: 22px 7%;
+        }
+
+        header h1 { margin: 0 0 8px; }
+
+        a { color: inherit; }
+
+        main {
+            max-width: 750px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px #0000000a;
+        }
+
+        .category { color: #64748b; }
+
+        .price {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #e5f6e9;
+            color: #176534;
+        }
+
+        .non-veg {
+            background: #ffebe8;
+            color: #a62e20;
+        }
+
+        .availability {
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: #183b32;
+            color: white;
+            cursor: pointer;
+            margin: 12px 8px 0 0;
+        }
+
+        .secondary { background: #64748b; }
+
+        #message { color: #a62e20; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🍽️ Canteen Connect</h1>
+        <a href="/menu.html">← Back to Menu</a>
+    </header>
+
+    <main>
+        <article class="card">
+            <p id="message">Loading food details...</p>
+            <div id="details" hidden>
+                <p class="category" id="category"></p>
+                <h2 id="name"></h2>
+                <p class="price" id="price"></p>
+                <span id="diet" class="tag"></span>
+                <p id="description"></p>
+                <p>Preparation time: <strong id="preparation"></strong></p>
+                <p class="availability" id="availability"></p>
+
+                <button id="favoriteButton">♡ Add to Favorites</button>
+                <button class="secondary" onclick="location.href='/menu.html'">
+                    Back to Menu
+                </button>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        const message = document.getElementById("message");
+        const details = document.getElementById("details");
+        const favoriteButton = document.getElementById("favoriteButton");
+
+        let currentItem = null;
+
+        async function loadDetails() {
+            if (!id) {
+                message.textContent = "No food item was selected.";
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/api/food-items/${encodeURIComponent(id)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Food item not found.");
+                }
+
+                currentItem = await response.json();
+
+                // Some controllers return null for missing IDs.
+                if (!currentItem || !currentItem.id) {
+                    throw new Error("Food item not found.");
+                }
+
+                document.getElementById("name").textContent =
+                    currentItem.name || "Food item";
+                document.getElementById("category").textContent =
+                    currentItem.category || "Other";
+                document.getElementById("price").textContent =
+                    `₹${currentItem.price}`;
+
+                const diet = document.getElementById("diet");
+                diet.textContent = currentItem.vegetarian
+                    ? "Vegetarian"
+                    : "Non-vegetarian";
+
+                if (!currentItem.vegetarian) {
+                    diet.classList.add("non-veg");
+                }
+
+                document.getElementById("description").textContent =
+                    currentItem.description || "Description not available yet.";
+
+                document.getElementById("preparation").textContent =
+                    currentItem.preparationTime != null
+                    ? `${currentItem.preparationTime} minutes`
+                    : "Not specified";
+
+                document.getElementById("availability").textContent =
+                    currentItem.available
+                    ? "Available"
+                    : "Currently unavailable";
+
+                message.hidden = true;
+                details.hidden = false;
+            } catch (error) {
+                message.textContent =
+                    "Could not load this item. Please return to the menu.";
+                console.error(error);
+            }
+        }
+
+        favoriteButton.addEventListener("click", () => {
+            if (!currentItem) return;
+
+            // Temporary browser-only favorite until the Favorites API is built.
+            const key = "canteenConnectFavorites";
+            const favorites = JSON.parse(localStorage.getItem(key) || "[]");
+            const exists = favorites.some(item => item.id === currentItem.id);
+
+            if (exists) {
+                message.hidden = false;
+                message.textContent = "This item is already in your favorites.";
+                return;
+            }
+
+            favorites.push(currentItem);
+            localStorage.setItem(key, JSON.stringify(favorites));
+
+            message.hidden = false;
+            message.textContent = "Added to favorites!";
+        });
+
+        loadDetails();
+    </script>
+</body>
+</html>
