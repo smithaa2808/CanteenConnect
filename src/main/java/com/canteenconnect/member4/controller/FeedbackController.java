@@ -1,0 +1,4 @@
+package com.canteenconnect.member4.controller;
+import com.canteenconnect.member4.entity.Feedback;import com.canteenconnect.member4.entity.Rating;import com.canteenconnect.member4.service.FeedbackService;import org.springframework.web.bind.annotation.*;import java.util.List;
+@RestController @RequestMapping("/api") @CrossOrigin
+public class FeedbackController {private final FeedbackService service;public FeedbackController(FeedbackService service){this.service=service;}public record FeedbackRequest(String orderId,String comments,int rating){}@GetMapping("/feedback") public List<Feedback> feedback(){return service.getFeedback();}@GetMapping("/ratings") public List<Rating> ratings(){return service.getRatings();}@PostMapping("/feedback") public Feedback submit(@RequestBody FeedbackRequest req){return service.submit(req.orderId(),req.comments(),req.rating());}}

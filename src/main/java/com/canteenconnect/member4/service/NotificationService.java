@@ -1,0 +1,3 @@
+package com.canteenconnect.member4.service;
+import com.canteenconnect.member4.entity.Notification;import com.canteenconnect.member4.repository.NotificationRepository;import org.springframework.stereotype.Service;import java.util.List;
+@Service public class NotificationService {private final NotificationRepository repo;public NotificationService(NotificationRepository repo){this.repo=repo;}public List<Notification> getAll(){return repo.findAllByOrderByCreatedAtDesc();}public Notification markRead(Long id){Notification n=repo.findById(id).orElseThrow(()->new IllegalArgumentException("Notification not found"));n.setReadStatus(true);return repo.save(n);} }
